@@ -177,5 +177,12 @@ function render()
     gl.uniformMatrix4fv(matrixLoc, false, flatten(mvt));
     gl.drawArrays( gl.TRIANGLES, 0, numVertices );
 
+    // teikna "gervitunglið"
+    var mvgt = mult(mvt, rotateZ(30.0*rotYear));
+    mvgt = mult(mvgt, translate(1.8, 0.0, 0.0));
+    mvgt = mult(mvgt, scalem(0.3, 0.3, 0.3));
+    gl.uniformMatrix4fv(matrixLoc, false, flatten(mvgt));
+    gl.drawArrays( gl.TRIANGLES, 0, numVertices );
+
     requestAnimFrame( render );
 }
