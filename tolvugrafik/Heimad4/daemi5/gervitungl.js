@@ -15,6 +15,7 @@ var origY;
 var rotYear = 0.0;
 var rotDay = 0.0;
 var earthTilt = 23.5;
+var velocity = 1.0;
 
 var matrixLoc;
 
@@ -78,6 +79,19 @@ window.onload = function init()
         }
     } );
 
+    window.addEventListener("keydown", function(e) {
+        switch(e.keyCode) {
+            case 38:
+                if(velocity < 10) velocity++;
+                break;
+            case 40:
+                if(velocity > 1) velocity--;
+                break;
+            default:
+                break;
+        }
+    });
+
     render();
 }
 
@@ -135,8 +149,8 @@ function render()
 {
     gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-    rotDay += 1.0;
-    rotYear += 0.1;        // not the correct value, but looks better!
+    rotDay += 1.0*velocity;
+    rotYear += 0.1*velocity;        // not the correct value, but looks better!
 
     var mv = mat4();
     mv = mult( mv, rotateX(spinX) );
