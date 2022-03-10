@@ -1,21 +1,35 @@
 var canvas;
 var gl;
 
-var numVertices  = 36;
+var numVertices  = 24;
 
-var points = [];
-var colors = [];
+//var colors = [];
 
 var movement = false;     // Do we rotate?
 var spinX = 0;
 var spinY = 0;
 var origX;
 var origY;
-var rotY = 0.0;
-var rotZ = 0.0;
-var angle = 1;
 
 var matrixLoc;
+var colorLoc;
+
+var v = [
+    vec3( -0.8, -0.8,  0.8 ),
+    vec3( -0.8,  0.8,  0.8 ),
+    vec3(  0.8,  0.8,  0.8 ),
+    vec3(  0.8, -0.8,  0.8 ),
+    vec3( -0.8, -0.8, -0.8 ),
+    vec3( -0.8,  0.8, -0.8 ),
+    vec3(  0.8,  0.8, -0.8 ),
+    vec3(  0.8, -0.8, -0.8 )
+];
+
+var lines = [ v[0], v[1], v[1], v[2], v[2], v[3], v[3], v[0],
+          v[4], v[5], v[5], v[6], v[6], v[7], v[7], v[4],
+          v[0], v[4], v[1], v[5], v[2], v[6], v[3], v[7]
+        ];
+
 
 window.onload = function init()
 {
@@ -24,7 +38,7 @@ window.onload = function init()
     gl = WebGLUtils.setupWebGL( canvas );
     if ( !gl ) { alert( "WebGL isn't available" ); }
 
-    colorCube();
+    //colorCube();
 
     gl.viewport( 0, 0, canvas.width, canvas.height );
     gl.clearColor( 1.0, 1.0, 1.0, 1.0 );
@@ -37,22 +51,23 @@ window.onload = function init()
     var program = initShaders( gl, "vertex-shader", "fragment-shader" );
     gl.useProgram( program );
     
-    var cBuffer = gl.createBuffer();
+   /* var cBuffer = gl.createBuffer();
     gl.bindBuffer( gl.ARRAY_BUFFER, cBuffer );
     gl.bufferData( gl.ARRAY_BUFFER, flatten(colors), gl.STATIC_DRAW );
 
     var vColor = gl.getAttribLocation( program, "vColor" );
     gl.vertexAttribPointer( vColor, 4, gl.FLOAT, false, 0, 0 );
-    gl.enableVertexAttribArray( vColor );
+    gl.enableVertexAttribArray( vColor );*/
 
     var vBuffer = gl.createBuffer();
     gl.bindBuffer( gl.ARRAY_BUFFER, vBuffer );
-    gl.bufferData( gl.ARRAY_BUFFER, flatten(points), gl.STATIC_DRAW );
+    gl.bufferData( gl.ARRAY_BUFFER, flatten(lines), gl.STATIC_DRAW );
 
     var vPosition = gl.getAttribLocation( program, "vPosition" );
     gl.vertexAttribPointer( vPosition, 3, gl.FLOAT, false, 0, 0 );
     gl.enableVertexAttribArray( vPosition );
 
+    colorLoc = gl.getUniformLocation( program, "wireColor" );
     matrixLoc = gl.getUniformLocation( program, "rotation" );
 
     //event listeners for mouse
@@ -79,7 +94,7 @@ window.onload = function init()
     render();
 }
 
-function colorCube()
+/*function colorCube()
 {
     quad( 1, 0, 3, 2 );
     quad( 2, 3, 7, 6 );
@@ -91,16 +106,6 @@ function colorCube()
 
 function quad(a, b, c, d) 
 {
-    var vertices = [
-        vec3( -0.5, -0.5,  0.5 ),
-        vec3( -0.5,  0.5,  0.5 ),
-        vec3(  0.5,  0.5,  0.5 ),
-        vec3(  0.5, -0.5,  0.5 ),
-        vec3( -0.5, -0.5, -0.5 ),
-        vec3( -0.5,  0.5, -0.5 ),
-        vec3(  0.5,  0.5, -0.5 ),
-        vec3(  0.5, -0.5, -0.5 )
-    ];
 
     var vertexColors = [
         [ 0.0, 0.0, 0.0, 1.0 ],  // black
@@ -122,33 +127,32 @@ function quad(a, b, c, d)
     var indices = [ a, b, c, a, c, d ];
 
     for ( var i = 0; i < indices.length; ++i ) {
-        points.push( vertices[indices[i]] );
         colors.push(vertexColors[a]);
-        
     }
-}
+}*/
 
 
 function render()
 {
     gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-    rotY+=0.5;
-    if(rotZ >= 35 || rotZ <= -35) angle = -angle;
-    rotZ+=angle;
     var mv = mat4();
     mv = mult( mv, rotateX(spinX) );
     mv = mult( mv, rotateY(spinY) ) ;
 
-    // Vogarstongin
-    mv1 = mult( mv, translate( 0, 0.3, 0.0 ) );
-    console.log(mv1);
-    mv1 = mult(mv1, rotateY(rotY));
-    mv1 = mult(mv1, rotateZ(rotZ));
-    mv1 = mult( mv1, scalem( 2, 0.05, 0.05 ) );
+    mv1 = mult( mv, translate( 0, 0, 0) );
+    mv1 = mult( mv1, scalem( 0.8, 0.8, 0.8 ) );
+    gl.uniform4fv( colorLoc, vec4(0.0, 0.0, 1.0, 1.0) );
     gl.uniformMatrix4fv(matrixLoc, false, flatten(mv1));
     gl.drawArrays( gl.LINES, 0, numVertices );
 
-    // Stallurinn
+     smv = mult(mv1, translate(0, 0.5, 0));
+     smv = mult( smv, rotateX(spinX) );
+     smv = mult( smv, rotateY(spinY) ) ;
+     smv = mult(smv, scalem(0.2, 0.2, 0.2));
+     gl.uniformMatrix4fv(matrixLoc, false, flatten(smv));
+     gl.drawArrays( gl.TRIANGLES, 0, numVertices );
+
+   /* // Stallurinn
     mv1 = mult( mv, translate( 0, -0.3, 0.0 ) );
     mv1 = mult( mv1, scalem( 0.6, 0.05, 0.3 ) );
     gl.uniformMatrix4fv(matrixLoc, false, flatten(mv1));
@@ -159,7 +163,7 @@ function render()
     mv1 = mult( mv, scalem( 0.05, 0.6, 0.05 ) );
     
     gl.uniformMatrix4fv(matrixLoc, false, flatten(mv1));
-    gl.drawArrays( gl.TRIANGLES, 0, numVertices );
+    gl.drawArrays( gl.TRIANGLES, 0, numVertices );*/
 
     requestAnimFrame( render );
 }
