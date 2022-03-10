@@ -36,6 +36,13 @@ var trackBuffer;
 var roofBuffer;
 var vPosition;
 
+var eyeX;
+var eyeY;
+var spinX = 0;
+var spinY = 0;
+var origX = 0;
+var origY = 0;
+
 // the 36 vertices of the cube
 var cVertices = [
     // front side:
@@ -125,12 +132,23 @@ window.onload = function init()
     document.getElementById("Viewpoint").innerHTML = "1: Fjarlægt sjónarhorn";
     document.getElementById("Height").innerHTML = "Viðbótarhæð: "+ height;
 
+    canvas.addEventListener("mousemove", function(e) {
+        if(view == 0) {
+            spinY = ( spinY + (e.offsetX - origX) ) % 360;
+            spinX = ( spinX + (e.offsetY - origY) ) % 360;
+            origX = e.offsetX;
+            origY = e.offsetY;
+        }
+    });
+
     // Event listener for keyboard
     window.addEventListener("keydown", function(e){
         switch( e.keyCode ) {
             case 48:
                 view = 0;
                 document.getElementById("Viewpoint").innerHTML = "0: Auga í fastri hæð";
+                eyeX = 100;
+                eyeY = 100;
                 break;
             case 49:	// 1: distant and stationary viewpoint
                 view = 1;
@@ -286,6 +304,11 @@ function render()
     var mv = mat4();
     switch( view ) {
         case 0:
+            mv = lookAt( vec3(eyeX, eyeY, 5), vec3(spinX, spinY, 0.0), vec3(0.0, 0.0, 1.0) );
+	        drawScenery( mv );
+	        mv = mult( mv, translate( carXPos, carYPos, 0.0 ) );
+	        mv = mult( mv, rotateZ( carDirection ) ) ;
+	        drawCar( mv );
             break;
         case 1:
             // Distant and stationary viewpoint
