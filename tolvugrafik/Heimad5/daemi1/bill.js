@@ -188,12 +188,24 @@ window.onload = function init()
                 break;
             
             case 38:    // up arrow
-                height += 2.0;
-                document.getElementById("Height").innerHTML = "Viðbótarhæð: "+ height;
+                if(view != 0) {
+                    height += 2.0;
+                    document.getElementById("Height").innerHTML = "Viðbótarhæð: "+ height;
+                }
+                else {
+                    eyeX-=Math.cos(spinX);
+                    eyeY-=Math.sin(spinY);
+                }
                 break;
             case 40:    // down arrow
-                height -= 2.0;
-                document.getElementById("Height").innerHTML = "Viðbótarhæð: "+ height;
+                if(view != 0) {
+                    height -= 2.0;
+                    document.getElementById("Height").innerHTML = "Viðbótarhæð: "+ height;
+                }
+                else {
+                    eyeX+=Math.cos(spinX);
+                    eyeY+=Math.sin(spinY);
+                }
                 break;
         }
     } );
