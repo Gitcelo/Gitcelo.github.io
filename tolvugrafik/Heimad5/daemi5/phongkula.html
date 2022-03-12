@@ -47,7 +47,7 @@
             float Kd = max( dot(normalize(L), normalize(N)), 0.0 );
             vec4  diffuse = Kd*diffuseProduct;
             float Ks;
-            if(phong == 1.0) {
+            if(phong == 0.0) {
                 vec3 H = normalize( normalize(L) + normalize(E) );
                 Ks = pow( max(dot(normalize(N), H), 0.0), shininess );
             }

@@ -222,7 +222,6 @@ window.onload = function init() {
      checkbox.addEventListener('change', function() {
         if(checkbox.checked) phong = 1.0;
         else phong = 0.0;
-        console.log('hæ');
      });
 
     render();
