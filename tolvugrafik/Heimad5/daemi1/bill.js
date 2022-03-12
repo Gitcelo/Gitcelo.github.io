@@ -189,14 +189,14 @@ window.onload = function init() {
             case 38:    // up arrow
                     height += 2.0;
                     document.getElementById("Height").innerHTML = "Viðbótarhæð: " + height;
-                    eyeX += Math.cos(radians(spinX));
-                    eyeY += Math.sin(radians(spinY));
+                    eyeX -= Math.cos(radians(spinX));
+                    eyeY -= Math.sin(radians(spinY));
                 break;
             case 40:    // down arrow
                 height -= 2.0;
                 document.getElementById("Height").innerHTML = "Viðbótarhæð: " + height;
-                eyeX -= Math.cos(radians(spinX));
-                eyeY -= Math.sin(radians(spinY));
+                eyeX += Math.cos(radians(spinX));
+                eyeY += Math.sin(radians(spinY));
                 break;
         }
     });
