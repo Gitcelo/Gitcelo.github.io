@@ -174,7 +174,7 @@ function render() {
     ];
 
     gl.uniform1f( discardLoc, materialDiscarder );
-    gl.uniform4fv( diffuseLoc, flatten(vec4(Math.floor(diffuseProduct/100)+1, Math.floor(diffuseProduct%100/10)+1, diffuseProduct%10+1)) );
+    gl.uniform4fv( diffuseLoc, flatten(vec4(Math.floor(diffuseProduct/100)+1, Math.floor(diffuseProduct%100/10)+1, diffuseProduct%10+1, 1.0)) );
     gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix) );
     gl.uniformMatrix3fv(normalMatrixLoc, false, flatten(normalMatrix) );
 
