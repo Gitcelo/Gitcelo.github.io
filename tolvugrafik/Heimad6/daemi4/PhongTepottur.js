@@ -27,12 +27,14 @@ var materialAmbient = vec4( 0.2, 0.0, 0.2, 1.0 );
 var materialDiffuse = vec4( 1.0, 0.8, 0.0, 1.0 );
 var materialSpecular = vec4( 1.0, 1.0, 1.0, 1.0 );
 var materialShininess = 50.0;
+var materialDiscarder = 1.8;
 
 var ctm;
 var ambientColor, diffuseColor, specularColor;
 
 var modelViewMatrix, projectionMatrix;
 var modelViewMatrixLoc, projectionMatrixLoc;
+var discardLoc;
 
 var normalMatrix, normalMatrixLoc;
 
@@ -91,6 +93,7 @@ window.onload = function init() {
     modelViewMatrixLoc = gl.getUniformLocation( program, "modelViewMatrix" );
     projectionMatrixLoc = gl.getUniformLocation( program, "projectionMatrix" );
     normalMatrixLoc = gl.getUniformLocation( program, "normalMatrix" );
+    discardLoc = gl.getUniformLocation(program, "discarder");
 
     projectionMatrix = perspective( fovy, 1.0, near, far );
     gl.uniformMatrix4fv(projectionMatrixLoc, false, flatten(projectionMatrix) );
@@ -100,6 +103,7 @@ window.onload = function init() {
     gl.uniform4fv( gl.getUniformLocation(program, "specularProduct"), flatten(specularProduct) );
     gl.uniform4fv( gl.getUniformLocation(program, "lightPosition"), flatten(lightPosition) );
     gl.uniform1f( gl.getUniformLocation(program, "shininess"), materialShininess );
+    gl.uniform1f( discardLoc, materialDiscarder );
 
     //event listeners for mouse
     canvas.addEventListener("mousedown", function(e){
@@ -131,6 +135,21 @@ window.onload = function init() {
          }
      }  );
 
+     window.addEventListener("keydown", function(e) {
+        switch(e.keyCode) {
+            case 38: // up arrow
+                materialDiscarder += 0.2;
+                if(materialDiscarder > 4.0) materialDiscarder = 4.0;
+                console.log(materialDiscarder);
+                break;
+            case 40: // down 
+                materialDiscarder -= 0.2;
+                if(materialDiscarder < 0.0) materialDiscarder = 0.0;
+                console.log(materialDiscarder);
+                break;
+        }
+     });
+
     render();
 }
 
@@ -149,6 +168,7 @@ function render() {
         vec3(modelViewMatrix[2][0], modelViewMatrix[2][1], modelViewMatrix[2][2])
     ];
 
+    gl.uniform1f( discardLoc, materialDiscarder );
     gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix) );
     gl.uniformMatrix3fv(normalMatrixLoc, false, flatten(normalMatrix) );
 

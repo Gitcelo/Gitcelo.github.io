@@ -34,6 +34,7 @@
         uniform vec4 diffuseProduct;
         uniform vec4 specularProduct;
         uniform float shininess;
+        uniform float discarder;
         varying vec3 N, L, E;
         
         void main()
@@ -53,7 +54,7 @@
             vec4 color = ambient + diffuse + specular;
             color.a = 1.0;
         
-            if( length(color) > 1.8 )
+            if( length(color) > discarder )
                 discard;
             else
                 gl_FragColor = color;
