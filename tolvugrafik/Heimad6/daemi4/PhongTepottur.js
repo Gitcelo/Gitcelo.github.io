@@ -20,11 +20,11 @@ var far = 100.0;
 
 var lightPosition = vec4(10.0, 10.0, 10.0, 1.0 );
 var lightAmbient = vec4(1.0, 1.0, 1.0, 1.0 );
-var lightDiffuse = vec4( 1.0, 1.0, 1.0, 1.0 );
+//var lightDiffuse = vec4( 1.0, 1.0, 1.0, 1.0 );
 var lightSpecular = vec4( 1.0, 1.0, 1.0, 1.0 );
 
 var materialAmbient = vec4( 0.2, 0.0, 0.2, 1.0 );
-var materialDiffuse = vec4( 1.0, 0.8, 0.0, 1.0 );
+//var materialDiffuse = vec4( 1.0, 0.8, 0.0, 1.0 );
 var materialSpecular = vec4( 1.0, 1.0, 1.0, 1.0 );
 var materialShininess = 50.0;
 var materialDiscarder = 1.8;
@@ -35,7 +35,8 @@ var ambientColor, diffuseColor, specularColor;
 var modelViewMatrix, projectionMatrix;
 var modelViewMatrixLoc, projectionMatrixLoc;
 var discardLoc;
-
+var diffuseProduct;
+var diffuseLoc;
 var normalMatrix, normalMatrixLoc;
 
 var eye;
@@ -59,7 +60,7 @@ window.onload = function init() {
 
     var myTeapot = teapot(15);
     myTeapot.scale(0.5, 0.5, 0.5);
-
+    diffuseProduct = 499;
     console.log(myTeapot.TriangleVertices.length);
 
     points = myTeapot.TriangleVertices;
@@ -70,7 +71,7 @@ window.onload = function init() {
 
 
     ambientProduct = mult(lightAmbient, materialAmbient);
-    diffuseProduct = mult(lightDiffuse, materialDiffuse);
+    //diffuseProduct = mult(lightDiffuse, materialDiffuse);
     specularProduct = mult(lightSpecular, materialSpecular);
 
 
@@ -94,12 +95,13 @@ window.onload = function init() {
     projectionMatrixLoc = gl.getUniformLocation( program, "projectionMatrix" );
     normalMatrixLoc = gl.getUniformLocation( program, "normalMatrix" );
     discardLoc = gl.getUniformLocation(program, "discarder");
+    diffuseLoc = gl.getUniformLocation(program, "diffuseProduct");
 
     projectionMatrix = perspective( fovy, 1.0, near, far );
     gl.uniformMatrix4fv(projectionMatrixLoc, false, flatten(projectionMatrix) );
 
     gl.uniform4fv( gl.getUniformLocation(program, "ambientProduct"), flatten(ambientProduct) );
-    gl.uniform4fv( gl.getUniformLocation(program, "diffuseProduct"), flatten(diffuseProduct) );
+    //gl.uniform4fv( gl.getUniformLocation(program, "diffuseProduct"), flatten(diffuseProduct) );
     gl.uniform4fv( gl.getUniformLocation(program, "specularProduct"), flatten(specularProduct) );
     gl.uniform4fv( gl.getUniformLocation(program, "lightPosition"), flatten(lightPosition) );
     gl.uniform1f( gl.getUniformLocation(program, "shininess"), materialShininess );
@@ -137,19 +139,22 @@ window.onload = function init() {
 
      window.addEventListener("keydown", function(e) {
         switch(e.keyCode) {
+            case 37: // left arrow
+                if(diffuseProduct>0) diffuseProduct--;
+                break;
             case 38: // up arrow
                 materialDiscarder += 0.2;
                 if(materialDiscarder > 4.0) materialDiscarder = 4.0;
-                console.log(materialDiscarder);
+                break;
+            case 39: // right arrow
+                if(diffuseProduct<999) diffuseProduct++;
                 break;
             case 40: // down 
                 materialDiscarder -= 0.2;
                 if(materialDiscarder < 0.0) materialDiscarder = 0.0;
-                console.log(materialDiscarder);
                 break;
         }
      });
-
     render();
 }
 
@@ -169,6 +174,7 @@ function render() {
     ];
 
     gl.uniform1f( discardLoc, materialDiscarder );
+    gl.uniform4fv( diffuseLoc, flatten(vec4(Math.floor(diffuseProduct/100)+1, Math.floor(diffuseProduct%100/10)+1, diffuseProduct%10+1)) );
     gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix) );
     gl.uniformMatrix3fv(normalMatrixLoc, false, flatten(normalMatrix) );
 
