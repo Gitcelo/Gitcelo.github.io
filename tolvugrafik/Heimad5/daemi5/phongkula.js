@@ -59,10 +59,18 @@ var phong = 0.0;
 var phongLoc;
     
 function triangle(a, b, c) {
-     
+
+     if(Math.random > 1.0) {
      pointsArray.push(a);
      pointsArray.push(b);      
      pointsArray.push(c);
+     }
+     else {
+        pointsArray.push(b);
+        pointsArray.push(c);      
+        pointsArray.push(a);
+        console.log('hæ');
+     }
     
      // normals are vectors
      
@@ -115,6 +123,8 @@ window.onload = function init() {
     gl.clearColor( 0.9, 1.0, 1.0, 1.0 );
     
     gl.enable(gl.DEPTH_TEST);
+    gl.enable(gl.CULL_FACE);
+    gl.cullFace(gl.BACK);
     gl.depthFunc(gl.LEQUAL);
 
     var dypi = gl.getParameter(gl.DEPTH_BITS);

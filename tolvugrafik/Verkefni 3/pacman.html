@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>3D Pacman</title>
+    <style>
+        body {
+            margin: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="c"  width="800" height="800"></canvas>
+    <script src="js/three.js"></script>
+    <script src="js/examples/js/controls/OrbitControls.js"></script>
+    <script>
+        const canvas = document.querySelector('#c');
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const controls = new THREE.OrbitControls( camera, canvas );
+        const renderer = new THREE.WebGLRenderer({canvas, antialias:true});
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        const geometry = new THREE.SphereGeometry(0.53, 20, 20);
+        const material = new THREE.MeshPhongMaterial({ color: 0xffff00 });
+        const sphere = new THREE.Mesh(geometry, material);
+        scene.add(sphere);
+
+        const planeGeometry = new THREE.PlaneGeometry(20, 20);
+        const planeMaterial = new THREE.MeshPhongMaterial({ color: 0xcccccc });
+        const plane = new THREE.Mesh(planeGeometry, planeMaterial);
+        plane.rotation.x = -0.5 * Math.PI;
+        plane.position.set(0, -0.5, 0);
+        scene.add(plane);
+
+        const light = new THREE.DirectionalLight(0xFFFFFF, 1);
+        light.position.set(-1, 2, 4);
+        scene.add(light)
+
+        camera.position.z = 5;
+
+        function animate() {
+            requestAnimationFrame(animate);
+            sphere.rotation.x += 0.01;
+            sphere.rotation.y += 0.01;
+            renderer.render(scene, camera);
+        }
+        animate();
+    </script>
+</body>
+
+</html>
